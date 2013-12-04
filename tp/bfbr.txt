@@ -1,0 +1,6 @@
+animal('chevre');herbivore('chevre');cruel('loup');animal('loup')
+animal(x);cruel(x);carnivore(x)
+animal(x);herbivore(x);mange(x,'herbe')
+animal(x);carnivore(x);herbivore(y);mange(x,y)
+carnivore(x);herbivore(x);boire(x,'eau')
+animal(x);boire(x,y);manger(x,y);consomme(x,y)

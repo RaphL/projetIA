@@ -1,0 +1,80 @@
+package structure;
+
+import java.util.Vector;
+
+public class Substitution {
+	private Vector<CoupleTerms> EnsCoupleTerms;
+	
+	public Substitution(){
+		setEnsCoupleTerms(new Vector<CoupleTerms>());
+	}
+	
+	public Substitution(Substitution s){
+		setEnsCoupleTerms(new Vector<CoupleTerms>());
+		for (CoupleTerms c:s.EnsCoupleTerms){
+			EnsCoupleTerms.add(new CoupleTerms(c.getTermX(),c.getTermY()));
+		}
+	}
+	
+	public void addSubstitution(CoupleTerms c){
+		EnsCoupleTerms.add(c);
+	}
+
+	public Term getConst(Term t){
+		for (int i=0;i<EnsCoupleTerms.size();i++){
+			
+			Term tx=new Term(EnsCoupleTerms.get(i).getTermX().getLabel(), EnsCoupleTerms.get(i).getTermX().isConstant());
+			Term ty=new Term(EnsCoupleTerms.get(i).getTermY().getLabel(), EnsCoupleTerms.get(i).getTermY().isConstant());
+
+			if (tx.getLabel().equals(t.getLabel()) && tx.isConstant()==t.isConstant()){
+				return ty;
+			}
+		}
+		
+		return t;
+	}
+	
+	public Vector<CoupleTerms> getEnsCoupleTerms() {
+		return EnsCoupleTerms;
+	}
+
+	public void setEnsCoupleTerms(Vector<CoupleTerms> ensCoupleTerms) {
+		EnsCoupleTerms = ensCoupleTerms;
+	}
+	
+	public String toString(){
+		String s="{";
+		for (CoupleTerms c:EnsCoupleTerms){
+			s+=c;
+		}
+		s+="}";
+		return s;
+	}
+	
+	public int size(){
+		
+		return EnsCoupleTerms.size();
+		
+	}
+	
+	public boolean equalS(Substitution s){
+		for(CoupleTerms c:EnsCoupleTerms){
+			if(!(s.getConst(c.getTermX()).equalsT(c.getTermY()))){
+				return false;
+			}
+		}
+	//	System.out.println("EQUAL "+this+" = "+s);
+		return true;
+	}
+	
+	public boolean isContain(Vector<Substitution> v){
+		for(Substitution s:v){
+			if(equalS(s)){
+				return true;
+			}
+		}
+		return false;
+		
+	}
+
+}

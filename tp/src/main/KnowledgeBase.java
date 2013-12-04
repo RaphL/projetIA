@@ -1,0 +1,278 @@
+package main;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import structure.Atom;
+import structure.FactBase;
+import structure.Homomorphismes;
+import structure.Rule;
+import structure.RuleBase;
+import structure.Substitution;
+import structure.Substitutions;
+import structure.Term;
+
+
+public class KnowledgeBase {
+	private FactBase BF;
+	private RuleBase BR;
+	private int nbFaits;
+	
+	public KnowledgeBase(){
+		BF=new FactBase();
+	}
+	public KnowledgeBase(String chemin) throws IOException{
+		BufferedReader lectureFichier = new BufferedReader(new FileReader(chemin));
+		String s=lectureFichier.readLine();
+		if (s==""){
+			BF=new FactBase();
+		}
+		else {
+			BF=new FactBase(s);
+		}
+		BR=new RuleBase();
+		s=lectureFichier.readLine();
+		while (s!= null){
+			BR.addRule(new Rule(s));
+			s=lectureFichier.readLine();
+		}
+		lectureFichier.close();
+		nbFaits = BF.size();
+		//System.out.println("Fin du fichier");
+		System.out.println("Base de connaissance "+chemin+" chargee");
+	}
+	
+	private boolean HincluseBF(Rule r){
+		boolean incl=false;
+		for (Atom a:r.getHypothesis()){
+			if (BF.belongsAtom(a)){
+				incl=true;
+			}else{
+				return false;
+			}
+		}
+		return incl;
+	}
+
+	private boolean CincluseBF(Rule r, FactBase f){
+		for (int i=0;i<f.size();i++){
+			if (r.getConclusion()==f.getAtoms().get(i)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void ForwardChaining(){
+		boolean fin=false;
+		boolean applique[];
+		applique=new boolean[BR.size()];
+		for (int i=0; i<BR.size(); i++){
+			applique[i]=false;
+		}
+		while (!fin){
+			FactBase nouvFaits=new FactBase();
+			for (int i=0; i<BR.size();i++){
+				if (applique[i]==false){
+					if (HincluseBF(BR.getRule(i))){
+						applique[i]=true;
+						if (!(CincluseBF(BR.getRule(i), BF))&&!(CincluseBF(BR.getRule(i), nouvFaits))){
+							nouvFaits.addAtom(BR.getRule(i).getConclusion());
+						}
+					}
+				}
+			}
+			if (nouvFaits.isEmpty()){
+				fin=true;
+			}
+			else{
+				for (Atom a:nouvFaits.getAtoms()){
+					if (!BF.belongsAtom(a)){
+						BF.addAtom(a);
+					}
+				}
+			}
+		}
+	}
+	
+	
+	public void genereRule(Substitutions s, Rule r){
+		for (int j=0;j<s.getS().size();j++){
+			Rule regle=new Rule(r);
+			for (Atom a:regle.getHypothesis()){
+				for (int i=0;i<a.getArity();i++){	
+					Term term=new Term(s.getS().get(j).getConst(a.getArgI(i)).getLabel(),s.getS().get(j).getConst(a.getArgI(i)).isConstant());
+					a.setArgI(i,term);
+				}
+			}
+			for (int i=0;i<regle.getConclusion().getArity();i++){
+				Term term = new Term(s.getS().get(j).getConst(regle.getConclusion().getArgI(i)).getLabel(),s.getS().get(j).getConst(regle.getConclusion().getArgI(i)).isConstant());
+				regle.getConclusion().setArgI(i, term);
+			}
+			BR.addRule(regle);
+		}
+	}
+	
+	public void instanciation(){
+		RuleBase oldBR= BR;
+		BR = new RuleBase(); 
+		int taille=oldBR.size();
+		Substitutions.paramE2(BF, oldBR);
+		for (int i=0;i<taille;i++){
+			Substitutions s=new Substitutions();
+			s.paramE1(oldBR.getRule(i));
+			s.generateAllSub();
+			genereRule(s, oldBR.getRule(i));
+		}
+	}
+	
+	public ArrayList<Atom> requete(){
+		ArrayList<Atom> v=new ArrayList<Atom>();
+		System.out.println("Entrez votre requete sous la forme : animal('chevre');carnivore('loup')");
+		Scanner sc = new Scanner(System.in);
+		String rq = sc.next();
+		StringTokenizer st = new StringTokenizer(rq,";");
+   		while(st.hasMoreTokens())
+   		{
+   			String s = st.nextToken(); // s represente un atome
+   			Atom a = new Atom(s);
+   			v.add(a);
+   		}
+   		return v;
+	}
+	
+	public boolean checkReq(ArrayList<Atom> va){
+		for(Atom a:va){
+			boolean res=false;
+			for (Atom f:BF.getAtoms()){
+				if (f.equalsA(a)){
+					res=true;
+				}
+			}
+			if (res==false){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean checkReqHomomorphismes(ArrayList<Atom> va){
+		Homomorphismes h = new Homomorphismes(va,BF.getAtoms());
+		return h.backtrack();
+	}
+	
+	public Vector<Substitution> reqHomomorphismes(ArrayList<Atom> va){
+		Homomorphismes h = new Homomorphismes(va,BF.getAtoms());
+		return h.backtrackAll();
+	}
+	
+	public void afficheReqHomomorphismes(ArrayList<Atom> va){
+		Vector<Substitution> v = reqHomomorphismes(va);
+		for (Substitution s:v){
+			System.out.println(s);
+		}
+	}
+	
+	public FactBase getBF(){
+		return BF;
+	}
+	public RuleBase getBR(){
+		return BR;
+	}
+	public void addRule(Rule r){
+		BR.addRule(r);
+	}
+	public void addFact(Atom a){
+		BF.addAtom(a);
+	}
+	public String toString(){
+		String s=BF.toString();
+		s+=BR.toString();
+		return s;
+		
+	}
+	public void afficheBF(){
+		System.out.println(BF);
+	}
+	
+	public void afficheFaitsDeduits(){
+		System.out.println(BF.afficheSupRang(nbFaits));
+	}
+	
+	public void afficheBR(){
+		System.out.println(BR);
+	}
+	
+	public void viderBF(){
+		BF=new FactBase();
+		nbFaits = BF.size();
+	}
+	
+	public void ajouterFaits(){
+		boolean b = true;
+		while(b){
+			System.out.println("Saisissez un fait, ou 'fin' pour finir");
+			Scanner sc = new Scanner(System.in);
+			String rq = sc.next();
+			if(rq.equals("fin")){
+				System.out.println("Ajout(s) termin�(s)");
+				b=false;
+			}else{
+				System.out.println("Fait ajout� : "+rq);
+				BF.addFacts(rq);	
+			}
+		}
+	}
+	
+	public void saturer(){
+		int taille=BR.size();
+		ArrayList<Vector<Substitution>> tabH = new ArrayList<Vector<Substitution>>();
+		for(int i=0;i<taille;i++){
+			tabH.add(i, new Vector<Substitution>());
+		}
+		boolean fin=false;
+		Vector<Atom> newFacts;
+		while(!fin){
+			newFacts = new Vector<Atom>();
+			//System.out.println("Base de faits actuelle :");
+			//System.out.println(BF);
+			for (int i=0;i<taille;i++){
+				//System.out.println("Traitement de la règle : "+BR.getRule(i));
+				Homomorphismes h=new Homomorphismes(BR.getRule(i).getHypothesis(),BF.getAtoms());
+				Vector<Substitution> vsub = h.backtrackAll();
+				if(vsub.size()>0){
+					//System.out.println("Homomorphismes : "+vsub);
+					//System.out.println("Test des homomorphismes");
+				}else{
+					//System.out.println("Pas d'homomorphisme");
+				}
+				for(Substitution sub:vsub){
+					//System.out.println("Homomorphisme : "+sub);
+					//System.out.println("déjà présents :"+tabH.get(i));
+					if(!sub.isContain(tabH.get(i))){
+						//REVOIR LE TEST isConstain, ça plante
+						tabH.get(i).add(sub);
+						Atom fact = new Atom(BR.getRule(i).getConclusion(),sub);
+						if(!BF.belongsAtom(fact)){
+							//System.out.println("Fait ajouté :"+fact);
+							newFacts.add(fact);
+						}
+					}
+				}
+			}
+			if(newFacts.isEmpty()){
+				fin=true;
+			}else{
+				for(Atom a:newFacts){
+					BF.addAtom(a);
+				}
+			}
+		}
+	}
+	
+}

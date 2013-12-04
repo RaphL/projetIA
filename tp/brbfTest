@@ -1,0 +1,2 @@
+animal('chevre');animal('loup');cruel('loup')
+animal(x);cruel(x);carnivore(x)

@@ -1,0 +1,9 @@
+Benoît;Chloé
+Benoît;Djamel;Emma;Félix
+Gaëlle;Djamel;Amandine
+Chloé;Félix;Amandine
+Benoît;Xéna
+Xéna;Amandine;Habiba
+Chloé;Djamel
+Xéna;Chloé;Amandine
+Xéna;Benoît;Djamel

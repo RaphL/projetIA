@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Encapsulate field &apos;structure.Homomorphismes.S&apos; in &apos;structure.Homomorphismes&apos;&#x0A;- Original project: &apos;tp1&apos;&#x0A;- Original element: &apos;structure.Homomorphismes.S&apos;&#x0A;- Getter method name: &apos;getS&apos;&#x0A;- Setter method name: &apos;setS&apos;&#x0A;- Field visibility: &apos;public&apos;&#x0A;- Use getter and setter methods in declaring type" comments="false" declaring="true" description="Encapsulate field &apos;S&apos;" flags="589830" getter="getS" id="org.eclipse.jdt.ui.self.encapsulate" input="/src&lt;structure{Homomorphismes.java[Homomorphismes^S" insertion="-1" setter="setS" stamp="1384337258280" version="1.0" visibility="1"/>
+</session>
