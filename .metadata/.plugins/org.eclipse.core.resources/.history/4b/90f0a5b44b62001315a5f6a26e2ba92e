@@ -35,11 +35,7 @@ public class CoupleTerms {
 	public Term getTermY() {
 		return y;
 	}
-	
-	/**
-	 * Modifie le second élément du couple
-	 * @param x un terme
-	 */
+
 	public void setTermY(Term y) {
 		this.y = y;
 	}

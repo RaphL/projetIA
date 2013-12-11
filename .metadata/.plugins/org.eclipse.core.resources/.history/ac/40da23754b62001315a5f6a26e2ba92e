@@ -7,12 +7,13 @@ public class Atom
 	private String predicate; // le predicat (ou le symbole propositionnel) de l'atome
 	private ArrayList<Term> args; //la liste de termes de cet atome (vide si il s'agit d'un atome reduit a un symbole propositionnel)
 		
-
 	/**
 	 * Constructeur de la classe Atome
-	 * Créé une copie de l'atome passé en paramètre
-	 * @param a l'atome à copier
+	 * Cree un atome, avec ou sans termes
+	 * @param s l'atome, soit reduit a un nom de predicat, soit de la forme
+	 * predicat(liste de termes), ou les termes sont separes par des points virgules
 	 */
+	
 	public Atom(Atom a){
 		predicate=a.predicate;
 		args=new ArrayList<Term>();
@@ -21,12 +22,6 @@ public class Atom
 		}
 	}
 	
-	/**
-	 * Constructeur de la classe Atome
-	 * Créé un atome complètement instancié à partir d'un atome non instancié et d'une substitution
-	 * @param a l'atome non instancié
-	 * @param s la substitution
-	 */
 	public Atom(Atom a,Substitution s){
 		predicate=a.predicate;
 		args=new ArrayList<Term>();
@@ -35,13 +30,6 @@ public class Atom
 		}
 		
 	}
-	
-	/**
-	 * Constructeur de la classe Atome
-	 * Cree un atome, avec ou sans termes
-	 * @param s l'atome, soit reduit a un nom de predicat, soit de la forme
-	 * predicat(liste de termes), ou les termes sont separes par des points virgules
-	 */
 	
 	public Atom (String s)
 	{	
@@ -188,11 +176,6 @@ public class Atom
 		return s;
 	}
 	
-	
-	
-	/**
-	 * @return le nombre de variables différentes présentes dans l'atome
-	 */
 	public int getNbVar(){
 		int res=0;
 		ArrayList<Term> at=new ArrayList<Term>();
@@ -204,13 +187,7 @@ public class Atom
 		}
 		return res;
 	}
-	
-	
 
-	/**
-	 * @param al une liste d'atomes
-	 * @return vrai si l'atome est contenu dans la liste passée en paramètre
-	 */
 	public boolean isContain(ArrayList<Atom> al){
 			for(Atom a:al){
 				if(this.equalsA(a)){
@@ -218,7 +195,7 @@ public class Atom
 				}
 			}
 			return false;
-	}
+		}
 	
 }
 

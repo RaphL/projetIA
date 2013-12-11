@@ -18,14 +18,27 @@ import structure.Substitutions;
 import structure.Term;
 
 
+
 public class KnowledgeBase {
 	private FactBase BF;
 	private RuleBase BR;
 	private int nbFaits;
 	
+	
+	/**
+	 * Constructeur par défaut de la classe KnowledgBase.
+	 */
 	public KnowledgeBase(){
 		BF=new FactBase();
+		BR=new RuleBase();
 	}
+	
+	/**
+	 * Constructeur de la classe KnowledgeBase.
+	 * Construit une base de connaissance à partir d'un fichier formaté.
+	 * @param chemin
+	 * @throws IOException
+	 */
 	public KnowledgeBase(String chemin) throws IOException{
 		BufferedReader lectureFichier = new BufferedReader(new FileReader(chemin));
 		String s=lectureFichier.readLine();
@@ -43,10 +56,13 @@ public class KnowledgeBase {
 		}
 		lectureFichier.close();
 		nbFaits = BF.size();
-		//System.out.println("Fin du fichier");
 		System.out.println("Base de connaissance "+chemin+" chargee");
 	}
 	
+	/**
+	 * @param r
+	 * @return
+	 */
 	private boolean HincluseBF(Rule r){
 		boolean incl=false;
 		for (Atom a:r.getHypothesis()){
@@ -59,6 +75,11 @@ public class KnowledgeBase {
 		return incl;
 	}
 
+	/**
+	 * @param r
+	 * @param f
+	 * @return
+	 */
 	private boolean CincluseBF(Rule r, FactBase f){
 		for (int i=0;i<f.size();i++){
 			if (r.getConclusion()==f.getAtoms().get(i)){
@@ -68,6 +89,9 @@ public class KnowledgeBase {
 		return false;
 	}
 	
+	/**
+	 * 
+	 */
 	public void ForwardChaining(){
 		boolean fin=false;
 		boolean applique[];
@@ -101,6 +125,10 @@ public class KnowledgeBase {
 	}
 	
 	
+	/**
+	 * @param s
+	 * @param r
+	 */
 	public void genereRule(Substitutions s, Rule r){
 		for (int j=0;j<s.getS().size();j++){
 			Rule regle=new Rule(r);
@@ -118,6 +146,9 @@ public class KnowledgeBase {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void instanciation(){
 		RuleBase oldBR= BR;
 		BR = new RuleBase(); 
@@ -131,6 +162,9 @@ public class KnowledgeBase {
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public ArrayList<Atom> requete(){
 		ArrayList<Atom> v=new ArrayList<Atom>();
 		System.out.println("Entrez votre requete sous la forme : animal('chevre');carnivore('loup')");
@@ -146,6 +180,10 @@ public class KnowledgeBase {
    		return v;
 	}
 	
+	/**
+	 * @param va
+	 * @return
+	 */
 	public boolean checkReq(ArrayList<Atom> va){
 		for(Atom a:va){
 			boolean res=false;
@@ -161,16 +199,27 @@ public class KnowledgeBase {
 		return true;
 	}
 	
+	/**
+	 * @param va
+	 * @return
+	 */
 	public boolean checkReqHomomorphismes(ArrayList<Atom> va){
 		Homomorphismes h = new Homomorphismes(va,BF.getAtoms());
 		return h.backtrack();
 	}
 	
+	/**
+	 * @param va
+	 * @return
+	 */
 	public Vector<Substitution> reqHomomorphismes(ArrayList<Atom> va){
 		Homomorphismes h = new Homomorphismes(va,BF.getAtoms());
 		return h.backtrackAll();
 	}
 	
+	/**
+	 * @param va
+	 */
 	public void afficheReqHomomorphismes(ArrayList<Atom> va){
 		Vector<Substitution> v = reqHomomorphismes(va);
 		for (Substitution s:v){
@@ -178,41 +227,74 @@ public class KnowledgeBase {
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public FactBase getBF(){
 		return BF;
 	}
+	
+	/**
+	 * @return
+	 */
 	public RuleBase getBR(){
 		return BR;
 	}
+	
+	/**
+	 * @param r
+	 */
 	public void addRule(Rule r){
 		BR.addRule(r);
 	}
+	
+	/**
+	 * @param a
+	 */
 	public void addFact(Atom a){
 		BF.addAtom(a);
 	}
+	
+	
 	public String toString(){
 		String s=BF.toString();
 		s+=BR.toString();
 		return s;
 		
 	}
+	
+	/**
+	 * 
+	 */
 	public void afficheBF(){
 		System.out.println(BF);
 	}
 	
+	/**
+	 * 
+	 */
 	public void afficheFaitsDeduits(){
 		System.out.println(BF.afficheSupRang(nbFaits));
 	}
 	
+	/**
+	 * 
+	 */
 	public void afficheBR(){
 		System.out.println(BR);
 	}
 	
+	/**
+	 * 
+	 */
 	public void viderBF(){
 		BF=new FactBase();
 		nbFaits = BF.size();
 	}
 	
+	/**
+	 * 
+	 */
 	public void ajouterFaits(){
 		boolean b = true;
 		while(b){
@@ -229,6 +311,9 @@ public class KnowledgeBase {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void saturer(){
 		int taille=BR.size();
 		ArrayList<Vector<Substitution>> tabH = new ArrayList<Vector<Substitution>>();

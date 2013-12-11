@@ -26,6 +26,7 @@ public class KnowledgeBase {
 	public KnowledgeBase(){
 		BF=new FactBase();
 	}
+	
 	public KnowledgeBase(String chemin) throws IOException{
 		BufferedReader lectureFichier = new BufferedReader(new FileReader(chemin));
 		String s=lectureFichier.readLine();
@@ -43,7 +44,6 @@ public class KnowledgeBase {
 		}
 		lectureFichier.close();
 		nbFaits = BF.size();
-		//System.out.println("Fin du fichier");
 		System.out.println("Base de connaissance "+chemin+" chargee");
 	}
 	
@@ -239,22 +239,27 @@ public class KnowledgeBase {
 		Vector<Atom> newFacts;
 		while(!fin){
 			newFacts = new Vector<Atom>();
+			//System.out.println("Base de faits actuelle :");
+			//System.out.println(BF);
 			for (int i=0;i<taille;i++){
-				System.out.println("Traitement de la règle : "+BR.getRule(i));
+				//System.out.println("Traitement de la règle : "+BR.getRule(i));
 				Homomorphismes h=new Homomorphismes(BR.getRule(i).getHypothesis(),BF.getAtoms());
 				Vector<Substitution> vsub = h.backtrackAll();
-				System.out.println("Homomorphismes :");
-				System.out.println(vsub);
-				System.out.println("Test des homomorphismes");
+				if(vsub.size()>0){
+					//System.out.println("Homomorphismes : "+vsub);
+					//System.out.println("Test des homomorphismes");
+				}else{
+					//System.out.println("Pas d'homomorphisme");
+				}
 				for(Substitution sub:vsub){
-					System.out.println("Homomorphisme :");
-					System.out.println(sub);
-					System.out.println("déjà présents :");
-					System.out.println(tabH.get(i));
+					//System.out.println("Homomorphisme : "+sub);
+					//System.out.println("déjà présents :"+tabH.get(i));
 					if(!sub.isContain(tabH.get(i))){
+						//REVOIR LE TEST isConstain, ça plante
 						tabH.get(i).add(sub);
 						Atom fact = new Atom(BR.getRule(i).getConclusion(),sub);
 						if(!BF.belongsAtom(fact)){
+							//System.out.println("Fait ajouté :"+fact);
 							newFacts.add(fact);
 						}
 					}

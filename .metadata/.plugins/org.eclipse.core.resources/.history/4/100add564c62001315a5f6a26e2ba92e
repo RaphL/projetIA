@@ -208,7 +208,7 @@ public class FactBase
 	
 	/**
 	 * @param j le rang
-	 * @return une chaîne de caractère contenant la liste des faits d'indice supérieur ou égal à j (utilisé pour obtenir la liste des faits déduits)
+	 * @return la liste des faits d'indice supérieur ou égal à j (utilisé pour obtenir la liste des faits déduits)
 	 */
 	public String afficheSupRang(int j)
 	{

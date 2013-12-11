@@ -145,13 +145,10 @@ public class Homomorphismes {
 	private boolean isHomomorphismePartiel(Substitution sub) {
 		for(Atom at:A1){
 			if(at.getNbVar()<=sub.size()){
-				//System.out.println(at+" : Je peux être instancié. "+at.getNbVar()+"<="+sub.size());
 				Atom instance = new Atom(at,sub);
 				if(!goodInstance(instance)){
 					return false;
 				}
-			}else{
-				//System.out.println(at+" : Je peux PAS être instancié. "+at.getNbVar()+"<="+sub.size());
 			}
 		}
 		return true;

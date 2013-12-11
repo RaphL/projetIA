@@ -20,11 +20,11 @@ public class Application0 {
 		
 		while (continuer){
 			System.out.println("Choisissez une action :");
-			System.out.println("1 : Saturer la base");
+			System.out.println("1 : Saturer la base (ordre 0)");
 			System.out.println("2 : Saturer la base (homomorphismes)");
 			System.out.println("3 : Afficher tous les faits");
 			System.out.println("4 : Afficher faits deduits");
-			System.out.println("5 : Repondre a une requete");
+			System.out.println("5 : Repondre a une requete (tp2)");
 			System.out.println("6 : Repondre a une requete (homomorphismes)");
 			System.out.println("7 : Entrer de nouveaux faits");
 			System.out.println("8 : Afficher les regles");

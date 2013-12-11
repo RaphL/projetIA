@@ -18,14 +18,27 @@ import structure.Substitutions;
 import structure.Term;
 
 
+
 public class KnowledgeBase {
 	private FactBase BF;
 	private RuleBase BR;
 	private int nbFaits;
 	
+	
+	/**
+	 * Constructeur par défaut de la classe KnowledgBase.
+	 */
 	public KnowledgeBase(){
 		BF=new FactBase();
+		BR=new RuleBase();
 	}
+	
+	/**
+	 * Constructeur de la classe KnowledgeBase.
+	 * Construit une base de connaissance à partir d'un fichier formaté.
+	 * @param chemin chemin du fichier à charger
+	 * @throws IOException
+	 */
 	public KnowledgeBase(String chemin) throws IOException{
 		BufferedReader lectureFichier = new BufferedReader(new FileReader(chemin));
 		String s=lectureFichier.readLine();
@@ -43,10 +56,14 @@ public class KnowledgeBase {
 		}
 		lectureFichier.close();
 		nbFaits = BF.size();
-		//System.out.println("Fin du fichier");
 		System.out.println("Base de connaissance "+chemin+" chargee");
 	}
 	
+	/**
+	 * Fonction de test d'appartenance de l'hypothèse d'une règle à la base de fait en ordre 0
+	 * @param r la règle à tester
+	 * @return vrai si l'hypothèse de la règle est dans la base de fait, faux sinon
+	 */
 	private boolean HincluseBF(Rule r){
 		boolean incl=false;
 		for (Atom a:r.getHypothesis()){
@@ -59,6 +76,12 @@ public class KnowledgeBase {
 		return incl;
 	}
 
+	/**
+	 * Fonction de test d'appartenance de la conclusion d'une règle à une base de fait en ordre 0
+	 * @param r la règle à tester
+	 * @param f la base de fait 
+	 * @return vrai si la conclusion de la règle est dans la base de fait f, faux sinon
+	 */
 	private boolean CincluseBF(Rule r, FactBase f){
 		for (int i=0;i<f.size();i++){
 			if (r.getConclusion()==f.getAtoms().get(i)){
@@ -68,6 +91,9 @@ public class KnowledgeBase {
 		return false;
 	}
 	
+	/**
+	 * Sature la base de fait en utilisant un algorithme de chaînage avant
+	 */
 	public void ForwardChaining(){
 		boolean fin=false;
 		boolean applique[];
@@ -101,6 +127,11 @@ public class KnowledgeBase {
 	}
 	
 	
+	/**
+	 * Fonction générant et ajoutant à la base de règle un ensemble de règles d'ordre 0 instanciées à partir d'une règle d'ordre 1 et d'un ensemble de substitutions
+	 * @param s l'ensemble de substitutions
+	 * @param r la règle à instancier
+	 */
 	public void genereRule(Substitutions s, Rule r){
 		for (int j=0;j<s.getS().size();j++){
 			Rule regle=new Rule(r);
@@ -118,6 +149,9 @@ public class KnowledgeBase {
 		}
 	}
 	
+	/**
+	 * Fonction qui transforme la base de règle d'ordre 1 en une base de règle complètement instanciée d'ordre 0
+	 */
 	public void instanciation(){
 		RuleBase oldBR= BR;
 		BR = new RuleBase(); 
@@ -131,6 +165,10 @@ public class KnowledgeBase {
 		}
 	}
 	
+	/**
+	 * Demande à l'utilisateur d'entrer une requête et la stocke dans une liste d'atomes
+	 * @return la requête sous forme d'ArrayList<Atom>
+	 */
 	public ArrayList<Atom> requete(){
 		ArrayList<Atom> v=new ArrayList<Atom>();
 		System.out.println("Entrez votre requete sous la forme : animal('chevre');carnivore('loup')");
@@ -146,6 +184,11 @@ public class KnowledgeBase {
    		return v;
 	}
 	
+	/**
+	 * Fonction vérifiant l'appartenance d'une requête d'ordre 0 à la base de fait
+	 * @param va la requête sous forme de liste d'atomes
+	 * @return vrai si la requête est vérifiée par la base de fait saturée, faux sinon
+	 */
 	public boolean checkReq(ArrayList<Atom> va){
 		for(Atom a:va){
 			boolean res=false;
@@ -161,16 +204,30 @@ public class KnowledgeBase {
 		return true;
 	}
 	
+	/**
+	 * Fonction vérifiant l'existence d'un homomorphisme d'une requête dans la base de fait saturée
+	 * @param va la requête sous forme de liste d'atomes
+	 * @return vrai si il existe un homomorphise de la requête dans la base de fait saturée, faux sinon
+	 */
 	public boolean checkReqHomomorphismes(ArrayList<Atom> va){
 		Homomorphismes h = new Homomorphismes(va,BF.getAtoms());
 		return h.backtrack();
 	}
 	
+	/**
+	 * Fonction retournant l'ensemble des homomorphismes d'une requête dans la base de fait saturée
+	 * @param va la requête sous forme de liste d'atomes
+	 * @return un vecteur de substitutions, chacune étant un homomorphisme de la requête présent dans la base de fait saturée
+	 */
 	public Vector<Substitution> reqHomomorphismes(ArrayList<Atom> va){
 		Homomorphismes h = new Homomorphismes(va,BF.getAtoms());
 		return h.backtrackAll();
 	}
 	
+	/**
+	 * Affiche sur la sorte standard l'ensemble des homomorphismes d'une requête présents dans la base de fait saturée
+	 * @param va la requête sous forme de liste d'atomes
+	 */
 	public void afficheReqHomomorphismes(ArrayList<Atom> va){
 		Vector<Substitution> v = reqHomomorphismes(va);
 		for (Substitution s:v){
@@ -178,41 +235,76 @@ public class KnowledgeBase {
 		}
 	}
 	
+	/**
+	 * @return la base de fait
+	 */
 	public FactBase getBF(){
 		return BF;
 	}
+	
+	/**
+	 * @return la base de règle
+	 */
 	public RuleBase getBR(){
 		return BR;
 	}
+	
+	/**
+	 * Ajoute une règle à la base de règle
+	 * @param r la règle à ajouter
+	 */
 	public void addRule(Rule r){
 		BR.addRule(r);
 	}
+	
+	/**
+	 * Ajoute un fait à la base de fait
+	 * @param a le fait à ajouter
+	 */
 	public void addFact(Atom a){
 		BF.addAtom(a);
 	}
+	
+	
 	public String toString(){
 		String s=BF.toString();
 		s+=BR.toString();
 		return s;
 		
 	}
+	
+	/**
+	 * Affiche la base de fait
+	 */
 	public void afficheBF(){
 		System.out.println(BF);
 	}
 	
+	/**
+	 * Affiche les faits déduits de la base de connaissance
+	 */
 	public void afficheFaitsDeduits(){
 		System.out.println(BF.afficheSupRang(nbFaits));
 	}
 	
+	/**
+	 * Affiche la base de règle
+	 */
 	public void afficheBR(){
 		System.out.println(BR);
 	}
 	
+	/**
+	 * Vide la base de faits
+	 */
 	public void viderBF(){
 		BF=new FactBase();
 		nbFaits = BF.size();
 	}
 	
+	/**
+	 * Fonction permettant de saisir un ensemble de fait sur l'entrée standard et les ajouter à la base de faits
+	 */
 	public void ajouterFaits(){
 		boolean b = true;
 		while(b){
@@ -220,15 +312,18 @@ public class KnowledgeBase {
 			Scanner sc = new Scanner(System.in);
 			String rq = sc.next();
 			if(rq.equals("fin")){
-				System.out.println("Ajout(s) termin�(s)");
+				System.out.println("Ajout(s) terminé(s)");
 				b=false;
 			}else{
-				System.out.println("Fait ajout� : "+rq);
+				System.out.println("Fait ajouté : "+rq);
 				BF.addFacts(rq);	
 			}
 		}
 	}
 	
+	/**
+	 * Sature la base de fait en utilisant la méthode des homomorphismes
+	 */
 	public void saturer(){
 		int taille=BR.size();
 		ArrayList<Vector<Substitution>> tabH = new ArrayList<Vector<Substitution>>();
@@ -239,27 +334,14 @@ public class KnowledgeBase {
 		Vector<Atom> newFacts;
 		while(!fin){
 			newFacts = new Vector<Atom>();
-			//System.out.println("Base de faits actuelle :");
-			//System.out.println(BF);
 			for (int i=0;i<taille;i++){
-				//System.out.println("Traitement de la règle : "+BR.getRule(i));
 				Homomorphismes h=new Homomorphismes(BR.getRule(i).getHypothesis(),BF.getAtoms());
 				Vector<Substitution> vsub = h.backtrackAll();
-				if(vsub.size()>0){
-					//System.out.println("Homomorphismes : "+vsub);
-					//System.out.println("Test des homomorphismes");
-				}else{
-					//System.out.println("Pas d'homomorphisme");
-				}
 				for(Substitution sub:vsub){
-					//System.out.println("Homomorphisme : "+sub);
-					//System.out.println("déjà présents :"+tabH.get(i));
 					if(!sub.isContain(tabH.get(i))){
-						//REVOIR LE TEST isConstain, ça plante
 						tabH.get(i).add(sub);
 						Atom fact = new Atom(BR.getRule(i).getConclusion(),sub);
 						if(!BF.belongsAtom(fact)){
-							//System.out.println("Fait ajouté :"+fact);
 							newFacts.add(fact);
 						}
 					}

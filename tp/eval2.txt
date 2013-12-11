@@ -1,0 +1,5 @@
+p(A,B);p(B,A);p(B,C);q(C)
+p(x,y);p(y,z);p(x,z)
+p(x,x);q(x)
+p(x,y);p(y,x);r(x)
+q(x);r(y);s(x,y,A)

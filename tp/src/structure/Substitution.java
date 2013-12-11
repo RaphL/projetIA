@@ -63,7 +63,6 @@ public class Substitution {
 				return false;
 			}
 		}
-	//	System.out.println("EQUAL "+this+" = "+s);
 		return true;
 	}
 	
