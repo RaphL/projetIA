@@ -171,7 +171,7 @@ public class KnowledgeBase {
 	 */
 	public ArrayList<Atom> requete(){
 		ArrayList<Atom> v=new ArrayList<Atom>();
-		System.out.println("Entrez votre requete sous la forme : animal('chevre');carnivore('loup')");
+		System.out.println("Entrez votre requete sous la forme : animal(x);carnivore('loup')");
 		Scanner sc = new Scanner(System.in);
 		String rq = sc.next();
 		StringTokenizer st = new StringTokenizer(rq,";");

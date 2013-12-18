@@ -223,6 +223,10 @@ public class FactBase
 	}
 	
 	
+	/**
+	 * Ajoute des faits sous forme d'une chaîne de caractères à la base de faits 
+	 * @param factlist la liste de faits à ajouter à la base
+	 */
 	public void addFacts(String factlist){
 		createFactBase(factlist);
 	}

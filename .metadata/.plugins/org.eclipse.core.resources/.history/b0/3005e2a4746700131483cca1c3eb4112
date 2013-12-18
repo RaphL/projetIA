@@ -1,0 +1,200 @@
+package structure;
+
+import java.util.ArrayList;
+import java.util.Vector;
+
+public class Homomorphismes {
+	
+	private ArrayList<Atom> A1;//variables
+	private ArrayList<Atom> A2;//constantes
+	private Vector<Term> E1;//variables
+	private Vector<Term> E2;//constantes
+	private Vector<Substitution> S;
+	
+	
+	/**
+	 * Constructeur de la classe Homomorphismes
+	 * Initialise la classe, qui permet ensuite de trouver l'ensemble des homomorphismes d'une liste d'atomes dans une seconde liste.
+	 * @param p1 la première liste d'atomes
+	 * @param p2 la seconde liste d'atomes
+	 */
+	public Homomorphismes(ArrayList<Atom> p1,ArrayList<Atom> p2){
+		A1=p1;
+		A2=p2;
+		S = new Vector<Substitution>();
+		E1 = new Vector<Term>();
+		E2 = new Vector<Term>();
+		paramE1(A1);
+		paramE2(A2);
+	}
+	
+	/**
+	 * Rempli la liste de termes E1 avec les variables présentes dans la liste d'atome passée en paramètre
+	 * @param vAtom la liste d'atome
+	 */
+	public void paramE1(ArrayList<Atom> vAtom){
+		for (Atom a:vAtom){
+			for (int i=0;i<a.getArity();i++){
+				if (a.getArgI(i).isVariable()){
+					addTerm(a.getArgI(i),E1);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Rempli la liste de termes E2 avec les constantes présentes dans la liste d'atome passée en paramètre
+	 * @param vAtom la liste d'atome
+	 */
+	public void paramE2(ArrayList<Atom> vAtom){
+		for (Atom a:vAtom){
+			for (int i=0;i<a.getArity();i++){
+				if (a.getArgI(i).isConstant()){
+					addTerm(a.getArgI(i),E2);
+				}
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * @param s
+	 * @return
+	 */
+	public Vector<Term> cdr (Vector<Term> s){
+		Vector<Term> temp=new  Vector<Term>();
+		 for (int i=1; i<s.size();i++){
+			 temp.add(s.get(i));
+		 }
+		 return temp;
+	}
+	
+	/**
+	 * @return
+	 */
+	public Vector<Substitution> getS() {
+		return S;
+	}
+	
+	/**
+	 * @return
+	 */
+	public Vector<Substitution> backtrackAll(){
+		if(E1.isEmpty()){
+			for(Atom a:A1){
+				boolean res=false;
+				if(a.isContain(A2)){
+					res=true;
+				}
+				if(!res){
+					return S;
+				}
+			}
+			S.add(new Substitution());
+			return S;
+		}else{
+			backtrackAllRec(new Substitution(),E1);
+			return S;
+		}
+	}
+	
+	/**
+	 * @param s
+	 * @param v
+	 */
+	public void backtrackAllRec(Substitution s, Vector<Term> v){
+		if (v.isEmpty()){
+			S.add(s);
+		}
+		else{
+			for (Term t:E2){
+				Substitution sub=new Substitution(s);
+				CoupleTerms couple=new CoupleTerms(v.firstElement(),t);
+				sub.addSubstitution(couple);
+				if(isHomomorphismePartiel(sub)){
+					//System.out.println("PARTIEL : bt("+sub+","+cdr(v)+")");
+					backtrackAllRec(sub, cdr(v));
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	public boolean backtrack(){
+		return backtrackRec(new Substitution(),E1);
+	}
+	
+	/**
+	 * @param s
+	 * @param v
+	 * @return
+	 */
+	public boolean backtrackRec(Substitution s, Vector<Term> v){
+		if (v.isEmpty()){
+			return true;
+		}
+		else{
+			for (Term t:E2){
+				Substitution sub=new Substitution(s);
+				CoupleTerms couple=new CoupleTerms(v.firstElement(),t);
+				sub.addSubstitution(couple);
+				boolean res = false;
+				if(isHomomorphismePartiel(sub)){
+					res = backtrackRec(sub, cdr(v));
+				}
+				if(res){
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	
+	
+	/**
+	 * @param a
+	 * @return
+	 */
+	private boolean goodInstance(Atom a){
+		if(a.getNbVar()>0){
+			return true;
+		}
+		for(Atom at:A2){
+			if (a.equalsA(at)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param sub
+	 * @return
+	 */
+	private boolean isHomomorphismePartiel(Substitution sub) {
+		for(Atom at:A1){
+			if(at.getNbVar()<=sub.size()){
+				Atom instance = new Atom(at,sub);
+				if(!goodInstance(instance)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public String toString(){
+		String s="{\n";
+		for (Substitution sub:S){
+			s+=sub+"\n";
+		}
+		s+="\n";
+		return s;
+	}
+	
+	
+	
+}

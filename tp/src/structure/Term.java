@@ -1,6 +1,7 @@
 package structure;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 public class Term
 {
@@ -17,6 +18,11 @@ public class Term
 		label = n;
 		constant = c;	}
 	
+	
+	/**
+	 * Constructeur par copie de la classe Terme
+	 * @param t
+	 */
 	public Term(Term t){
 		label = t.getLabel();
 		constant = t.isConstant();
@@ -86,13 +92,50 @@ public class Term
 		else return label;
 	}
 	
-	public boolean isContain(ArrayList<Term> at){
-		for(Term t:at){
+	
+	
+	/**
+	 * Teste l'appartenance du terme à la liste passée en paramètre
+	 * @param lt la liste de Term
+	 * @return vrai si lt contient le terme, faux sinon
+	 */
+	public boolean isContain(List<Term> lt){
+		for(Term t:lt){
 			if(this.equalsT(t)){
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * Fonction statique permettant d'ajouter un terme à un vecteur de terme sauf si il y est déjà présent
+	 * @param t le terme à ajouter
+	 * @param vTerm le vecteur de terme
+	 */
+	public static void addTerm(Term t, List<Term> lt){
+		boolean dejaVu=false;
+		for (Term t2:lt){
+			if (t.equalsT(t2)){
+				dejaVu=true;
+			}
+		}
+		if (!dejaVu){
+			lt.add(new Term(t.getLabel(),t.isConstant()));
+		}
+	}
+	
+	/**
+	 * @param s le vecteur dont on souhaite le cdr
+	 * @return un vecteur de terme contenant tout les termes du vecteur passé en paramètre, sauf le premier
+	 */
+	public static Vector<Term> cdr (Vector<Term> s){
+		Vector<Term> temp=new  Vector<Term>();
+		 for (int i=1; i<s.size();i++){
+			 temp.add(s.get(i));
+		 }
+		 return temp;
 	}
 	
 }

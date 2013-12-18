@@ -15,7 +15,7 @@ public class Rule
 
 	/**
 	 * Constructeur
-	 * @param strRule la regle, sous forme  sous forme textuelle ; cette forme est 
+	 * @param strRule la regle, sous forme textuelle ; cette forme est 
 	 * "atome1;atome2;...atomek", ou les (k-1) premiers atomes forment l'hypothese,
 	 * et le dernier forme la conclusion
 	 */
@@ -33,6 +33,10 @@ public class Rule
 	}
 	
 	
+	/**
+	 * Constructeur par copie de la classe Rule
+	 * @param strRule la règle à copier
+	 */
 	public Rule(String strRule)
 	{
 		hypothesis = new ArrayList<Atom>();

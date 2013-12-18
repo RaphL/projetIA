@@ -20,33 +20,31 @@ public class Application0 {
 		
 		while (continuer){
 			System.out.println("Choisissez une action :");
-			System.out.println("1 : Saturer la base (ordre 0)");
-			System.out.println("2 : Saturer la base (homomorphismes)");
-			System.out.println("3 : Afficher tous les faits");
-			System.out.println("4 : Afficher faits deduits");
-			System.out.println("5 : Repondre a une requete (tp2)");
-			System.out.println("6 : Repondre a une requete (homomorphismes)");
-			System.out.println("7 : Entrer de nouveaux faits");
-			System.out.println("8 : Afficher les regles");
-			System.out.println("9 : Quitter");
+			System.out.println("1 : Saturer la base");
+			System.out.println("2 : Afficher tous les faits");
+			System.out.println("3 : Afficher faits deduits");
+			System.out.println("4 : Repondre a une requete (test)");
+			System.out.println("5 : Repondre a une requete (résultat)");
+			System.out.println("6 : Entrer de nouveaux faits");
+			System.out.println("7 : Afficher les regles");
+			System.out.println("8 : Quitter");
 			
 			Scanner sc = new Scanner(System.in);
 			int i = sc.nextInt();
 			
 			switch (i){
-			case 1 : KB.instanciation();KB.ForwardChaining();break;
-			case 2 : KB.saturer();break;
-			case 3 : System.out.println(KB.getBF());break;
-			case 4 :KB.afficheFaitsDeduits();break;
-			case 5 :ArrayList<Atom> va = KB.requete();
-			if (KB.checkReq(va)){
+			case 1 : KB.saturer();break;
+			case 2 : System.out.println(KB.getBF());break;
+			case 3 : KB.afficheFaitsDeduits();break;
+			case 4 : ArrayList<Atom> va = KB.requete();
+			if (KB.checkReqHomomorphismes(va)){
 				System.out.println("Cette requete est verifiee par la base de fait saturee");
 				
 			}else{
 				System.out.println("Cette requete n'est pas verifiee par la base de fait saturee");
 			}
 			break;
-			case 6 : ArrayList<Atom> vecta = KB.requete();
+			case 5 : ArrayList<Atom> vecta = KB.requete();
 			if (KB.checkReqHomomorphismes(vecta)){
 				System.out.println("Cette requete est verifiee par la base de fait saturee");
 				KB.afficheReqHomomorphismes(vecta);
@@ -55,9 +53,9 @@ public class Application0 {
 				System.out.println("Cette requete n'est pas verifiee par la base de fait saturee");
 			}
 			break;
-			case 7 : KB.ajouterFaits();break;
-			case 8 : KB.afficheBR();break;
-			case 9 : continuer=false;
+			case 6 : KB.ajouterFaits();break;
+			case 7 : KB.afficheBR();break;
+			case 8 : continuer=false;
 			}
 		}
 	}
